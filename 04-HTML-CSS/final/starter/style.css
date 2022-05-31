@@ -1,0 +1,37 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgba(216, 186, 110, 0.575);
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 20px;
+  margin: 100px;
+}
+
+p {
+  font-size: small;
+  padding: 20px;
+}
+
+h1 {
+  font-size: x-large;
+  color: rgb(255, 60, 0);
+}
+.first {
+  font-weight: bold;
+  font-size: xx-large;
+  color: blue;
+}
+#your-name {
+  color: rgba(98, 48, 100, 0.575);
+  border: 5px dotted rgba(56, 12, 252, 0.575);
+  margin: 100px;
+  padding: 20px;
+}
+
+h2 {
+  text-align: center;
+}
