@@ -27,7 +27,7 @@ document.querySelector('.again').addEventListener('click', function () {
   document.querySelector(`.guess`).value = ``;
   document.querySelector('.message').textContent = `Start guessing...`;
   document.querySelector(`body`).style.backgroundColor = `#222`;
-  document.querySelector(`number`).style.width = `15rem`;
+  document.querySelector(`.number`).style.width = `15rem`;
 });
 
 //an event listener listens for events that occur on the page
@@ -45,27 +45,16 @@ document.querySelector('.check').addEventListener('click', function () {
     document.querySelector('.number').textContent = secretNum;
     //when player wins changes background color
     //when we manipulate a style we must use strings
+    document.querySelector('body').style.backgroundColor = `#60b347`;
+    document.querySelector('.number').style.width = `30rem`;
     if (score > highScore) {
       highScore = score;
       document.querySelector('.highscore').textContent = highScore;
     }
-    document.querySelector('body').style.backgroundColor = `#60b347`;
-    document.querySelector('number').style.width = `30rem`;
-
-    //when user input is too high
-  } else if (guess > secretNum) {
+  } else if (guess !== secretNum) {
     if (score > 1) {
-      document.querySelector('.message').textContent = 'Too high';
-      score--;
-      document.querySelector('.score').textContent = score;
-    } else {
-      document.querySelector('.message').textContent = 'You lost the game';
-      document.querySelector('.score').textContent = 0;
-    }
-    //when user input is too low
-  } else if (guess < secretNum) {
-    if (score > 1) {
-      document.querySelector('.message').textContent = 'Too low';
+      document.querySelector('.message').textContent =
+        guess > secretNum ? 'Too high!' : 'Too low!';
       score--;
       document.querySelector('.score').textContent = score;
     } else {
@@ -73,6 +62,27 @@ document.querySelector('.check').addEventListener('click', function () {
       document.querySelector('.score').textContent = 0;
     }
   }
+  //   //when user input is too high
+  //   else if (guess > secretNum) {
+  //     if (score > 1) {
+  //       document.querySelector('.message').textContent = 'Too high';
+  //       score--;
+  //       document.querySelector('.score').textContent = score;
+  //     } else {
+  //       document.querySelector('.message').textContent = 'You lost the game';
+  //       document.querySelector('.score').textContent = 0;
+  //     }
+  //     //when user input is too low
+  //   } else if (guess < secretNum) {
+  //     if (score > 1) {
+  //       document.querySelector('.message').textContent = 'Too low';
+  //       score--;
+  //       document.querySelector('.score').textContent = score;
+  //     } else {
+  //       document.querySelector('.message').textContent = 'You lost the game';
+  //       document.querySelector('.score').textContent = 0;
+  //     }
+  //   }
 });
 
 //this works as well without the function keyword
