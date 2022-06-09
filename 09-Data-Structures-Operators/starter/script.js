@@ -52,6 +52,89 @@ const restaurant = {
   },
 };
 
+// const ordersSet = new Set([
+//   `Pasta`,
+//   `Pizza`,
+//   `Pizza`,
+//   `Risotto`,
+//   `Pasta`,
+//   `Pizza`,
+// ]);
+// //will only show elements once even if multiple
+// console.log(ordersSet);
+// //will iterrate over the string jonas and split it
+// console.log(new Set(`Jonas`));
+// //will give back total amount of unique elements in the set
+// console.log(ordersSet.size);
+
+// console.log(ordersSet.has(`Pasta`)); //returns true because it is a element
+// console.log(ordersSet.has(`Cat`)); //returns false because it is not an element of set
+
+// //can add elements to a set, we add two here but only 1 is added due to no duplicates in a set
+// ordersSet.add(`Garlic Bread`);
+// ordersSet.add(`Garlic Bread`);
+// console.log(ordersSet);
+
+// ordersSet.delete(`Risotto`); //will delete the element from the set
+// console.log(ordersSet);
+
+// //Example
+// const staff = [`Waiter`, `Chef`, `Waiter`, `Manager`, `Chef`, `Waiter`];
+// const staffUnique = [...new Set(staff)];
+// console.log(staffUnique);
+
+//a map is a data structure we can use to map values to keys, like objects values are stored in key value pairs, in maps keys can have any type
+const rest = new Map();
+rest.set(`name`, `Classico Italiano`);
+rest.set(1, `Firenze Italy`);
+rest.set(2, `Lisbon, Portugal`);
+
+rest
+  .set(`catergories`, [`Italian`, `Pizzeria`, `Vegetarian`, `Organic`])
+  .set(`open`, 11)
+  .set(`close`, 23)
+  .set(true, `we are open :D`)
+  .set(false, `we are closed :()`);
+console.log(rest);
+
+console.log(rest.get(1));
+
+// Coding Challenge #3
+// Let's continue with our football betting app! This time, we have a map called
+// 'gameEvents' (see below) with a log of the events that happened during the
+// game. The values are the events themselves, and the keys are the minutes in which
+
+// each event happened (a football game has 90 minutes plus some extra time).
+
+// Your tasks:
+// 1. Create an array 'events' of the different game events that happened (no duplicates)
+// 2. After the game has finished, is was found that the yellow card from minute 64
+// was unfair. So remove this event from the game events log.
+// 3. Compute and log the following string to the console: "An event happened, on
+// average, every 9 minutes" (keep in mind that a game has 90 minutes)
+// 4. Loop over 'gameEvents' and log each element to the console, marking
+// whether it's in the first half or second half (after 45 min) of the game, like this:
+// [FIRST HALF] 17:
+// ⚽
+// GOAL
+
+// const gameEvents = new Map([
+//   [17, '⚽ GOAL'],
+//   [36, '🔁 Substitution'],
+//   [47, '⚽ GOAL'],
+//   [61, '🔁 Substitution'],
+//   [64, '🔶 Yellow card'],
+//   [69, '🔴 Red card'],
+//   [70, '🔁 Substitution'],
+//   [72, '🔁 Substitution'],
+//   [76, '⚽ GOAL'],
+//   [80, '⚽ GOAL'],
+//   [92, '🔶 Yellow card'],
+// ]);
+
+// const events = [new Set(gameEvents)];
+// console.log(events);
+
 //WITH optional chaining
 // console.log(restaurant.openingHours?.mon?.open);
 // const days = [`mon`, `tue`, `wed`, `thu`, `fri`, `sat`, `sun`];
@@ -125,46 +208,46 @@ Test data for 6.: First, use players 'Davies', 'Muller', 'Lewandowski' and 'Kimm
 Then, call the function again with players from game.scored
 */
 
-const game = {
-  team1: 'Bayern Munich',
-  team2: 'Borrussia Dortmund',
-  players: [
-    [
-      'Neuer',
-      'Pavard',
-      'Martinez',
-      'Alaba',
-      'Davies',
-      'Kimmich',
-      'Goretzka',
-      'Coman',
-      'Muller',
-      'Gnarby',
-      'Lewandowski',
-    ],
-    [
-      'Burki',
-      'Schulz',
-      'Hummels',
-      'Akanji',
-      'Hakimi',
-      'Weigl',
-      'Witsel',
-      'Hazard',
-      'Brandt',
-      'Sancho',
-      'Gotze',
-    ],
-  ],
-  score: '4:0',
-  scored: ['Lewandowski', 'Gnarby', 'Lewandowski', 'Hummels'],
-  date: 'Nov 9th, 2037',
-  odds: {
-    team1: 1.33,
-    x: 3.25,
-    team2: 6.5,
-  },
-};
+// const game = {
+//   team1: 'Bayern Munich',
+//   team2: 'Borrussia Dortmund',
+//   players: [
+//     [
+//       'Neuer',
+//       'Pavard',
+//       'Martinez',
+//       'Alaba',
+//       'Davies',
+//       'Kimmich',
+//       'Goretzka',
+//       'Coman',
+//       'Muller',
+//       'Gnarby',
+//       'Lewandowski',
+//     ],
+//     [
+//       'Burki',
+//       'Schulz',
+//       'Hummels',
+//       'Akanji',
+//       'Hakimi',
+//       'Weigl',
+//       'Witsel',
+//       'Hazard',
+//       'Brandt',
+//       'Sancho',
+//       'Gotze',
+//     ],
+//   ],
+//   score: '4:0',
+//   scored: ['Lewandowski', 'Gnarby', 'Lewandowski', 'Hummels'],
+//   date: 'Nov 9th, 2037',
+//   odds: {
+//     team1: 1.33,
+//     x: 3.25,
+//     team2: 6.5,
+//   },
+// };
 
 //Challenge 2
 //------------------------------------
@@ -192,10 +275,28 @@ const game = {
 // Lewandowski: 2
 // }
 
-for (const i of game.scored) {
-  console.log(`Goal ${i}`);
-}
-let newOdd = 0;
+//1
+
+// const scoredEntries = Object.entries(game.scored);
+
+// for (const [i, el] of scoredEntries) {
+//   console.log(`Goal ${Number(i) + 1}: ${el}`);
+// }
+
+// 2
+// const oddValues = Object.values(game.odds);
+// let average = 0;
+// for (const x of oddValues) average += x;
+// average /= oddValues.length;
+// console.log(average);
+
+//3
+// for (const [team, odd] of Object.entries(game.odds)) {
+//   const teamStr = team === 'x' ? `draw` : `victory ${game[team]}`;
+//   console.log(`Odd of ${teamStr} ${odd}`);
+// }
+
+//4
 
 //Challenge 1
 //------------------------------------
