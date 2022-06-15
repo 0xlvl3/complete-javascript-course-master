@@ -52,6 +52,167 @@ const restaurant = {
   },
 };
 
+const airLine = `TAP Air Portugal`;
+const plane = `A320`;
+
+console.log(airLine.indexOf(`r`));
+console.log(airLine.indexOf(`Portugal`)); //case sensitive
+console.log(airLine.lastIndexOf(`r`));
+console.log(airLine.lastIndexOf(`R`)); //won't be found (case sensitive)
+
+console.log(airLine.slice(4)); //returns Air Portugal
+console.log(airLine.slice(4, 7)); //returns Air
+console.log(airLine.slice(0, 3)); //returns TAP extracting a whole word
+console.log(airLine.slice(airLine.lastIndexOf(` `) + 1)); //returns the last word, +1 takes away the space as it's going off the index
+console.log(airLine.slice(-2)); //returns -al, - will return the last word indexing on
+
+const checkMiddleSeat = function (seat) {
+  //B & E are middle seats
+  const s = seat.slice(-1);
+  if (s === `B` || s === `E`) {
+    console.log(`You got the middle seat`);
+  } else console.log(`You got lucky`);
+};
+
+//whenever we call a method on a string behind the scenes JavaScript will convert the string to an object and then when the operation is done it is converted back to a regular string primitive
+
+checkMiddleSeat(`11B`);
+checkMiddleSeat(`23C`);
+checkMiddleSeat(`3E`);
+
+//taking input from a user and giving them back the correct format we want
+const passenger = `jOnAs`; // should be Jonas
+
+const passengerLower = passenger.toLowerCase(); // first we lowercase the whole string
+const passengerCorrect =
+  passengerLower[0].toUpperCase() + passengerLower.slice(1); //then we uppcase the 0 index which is `J` in this case and + it will the silce of passengerLower from index 1 to get `Jonas`
+console.log(passengerCorrect);
+
+// Comparing emails
+const email = `hello@jonas.io`;
+const loginEmail = `  Hello@Jonas.io \n`;
+
+const lowerEmail = loginEmail.toLowerCase(); //all lowercase
+const trimmedEmail = lowerEmail.trim(); //removes whitespace
+console.log(trimmedEmail);
+
+const normalizedEmail = loginEmail.toLowerCase().trim(); //since we can chain methods we can do it all in one
+console.log(normalizedEmail);
+
+//in a function
+const correctEmail = email => email.toLowerCase().trim();
+console.log(correctEmail(`        Hello@thisLower.io   `));
+
+//replacing
+const replaceThis = `Jackson`; //we will replace the k
+const newJack = replaceThis.replace(`k`, `c`);
+console.log(newJack);
+
+//we can also chain replace since it is once again a method
+const newJack2 = replaceThis.replace('k', 'c').replace(`o`, `0`);
+console.log(newJack2);
+
+const announcement = `All passengers come to boarding door 23. Boarding door 23!`;
+
+console.log(announcement.replace(`door`, `gate`)); //will replace the first string door with gate in the string but not all
+console.log(announcement.replaceAll(`door`, `gate`)); //replace all instances of door in the string
+console.log(announcement.replace(/door/g, `gate`)); //another way to do it using regex
+
+//Booleans
+const newPlane = `A320neo`;
+console.log(newPlane.includes(`A320`)); //returns true
+console.log(newPlane.includes(`Boeing`)); //returns false
+console.log(newPlane.startsWith(`Air`)); //returns false
+console.log(newPlane.endsWith(`neo`)); //returns true
+
+//Practice exercise
+const checkBaggage = function (items) {
+  const baggage = items.toLowerCase(); //this is used all the time
+  if (baggage.includes(`knife`) || baggage.includes(`gun`)) {
+    console.log(`You are NOT allowed on board`);
+  } else {
+    console.log(`Welcome aboard!`);
+  }
+};
+
+checkBaggage(`I have a laptop, some food and a pocket Knife`);
+checkBaggage(`Socks and camera`);
+checkBaggage(`Got some snacks and a gun for proctection`);
+
+//split and join
+console.log(`a+very+nice+string`.split(`+`));
+console.log(`Jonas Schmedtamn`.split(` `));
+const [firstName, lastName] = `Jonas Schmedtamn`.split(` `); //will take string and break it into two strings attached to those two variables
+console.log(firstName, lastName); //test
+
+const newName = [`Mr.`, firstName, lastName.toUpperCase()].join(` `); //join will join an array to create a string join(x) x === what will join the string
+console.log(newName);
+
+const capitalizeName = name => {
+  const names = name.split(` `);
+  const namesUpper = [];
+  for (const n of names) {
+    namesUpper.push(n[0].toUpperCase() + n.slice(1));
+  }
+  console.log(namesUpper.join(` `));
+};
+
+capitalizeName(`jessica ann smith davis`);
+capitalizeName(`jonas schemdtmann`);
+
+const maskCreditCard = function (number) {
+  const str = number + ``; //takes number and turns it into a string, anything + a string will convert the output to a string
+  const last = str.slice(-4);
+  return last.padStart(str.length, `*`);
+};
+
+console.log(maskCreditCard(12345671234567));
+console.log(maskCreditCard(29321923801312));
+
+//coding challenge 4
+
+// Write a program that receives a list of variable names written in underscore_case
+// and convert them to camelCase.
+//The input will come from a textarea inserted into the DOM (see code below to
+// insert the elements), and conversion will happen when the button is pressed.
+// Test data (pasted to textarea, including spaces):
+// underscore_case
+// first_name
+// Some_Variable
+// calculate_AGE
+// delayed_departure
+// Should produce this output (5 separate console.log outputs):
+// underscoreCase ✅
+// firstName ✅✅
+// someVariable ✅✅✅
+// calculateAge ✅✅✅✅
+// delayedDeparture ✅✅✅✅✅
+// Hints:
+// § Remember which character defines a new line in the textarea 😉
+// § The solution only needs to work for a variable made out of 2 words, like a_b
+// § Start without worrying about the ✅. Tackle that only after you have the variable
+// name conversion working 😉
+// § This challenge is difficult on purpose, so start watching the solution in case
+// you're stuck. Then pause and continue!
+// Afterwards, test with your own test data!
+
+const toCamelCase = function (str) {
+  const lowerStr = str.toLowerCase().split(`_`);
+  const secondStr = lowerStr[1].split(``);
+  const camelCap = secondStr[0].toUpperCase();
+  const camelCap2 = secondStr.join(``);
+  const sliceCamel = camelCap2.slice(1);
+  const newCamelCap = lowerStr[0] + camelCap + sliceCamel;
+
+  return newCamelCap;
+};
+
+console.log(toCamelCase(`underscore_case`));
+console.log(toCamelCase(`Some_Variable`));
+console.log(toCamelCase(`calculate_AGE`));
+console.log(toCamelCase(`delayed_departure`));
+console.log(toCamelCase(`first_name`));
+
 // const ordersSet = new Set([
 //   `Pasta`,
 //   `Pizza`,
@@ -84,20 +245,20 @@ const restaurant = {
 // console.log(staffUnique);
 
 //a map is a data structure we can use to map values to keys, like objects values are stored in key value pairs, in maps keys can have any type
-const rest = new Map();
-rest.set(`name`, `Classico Italiano`);
-rest.set(1, `Firenze Italy`);
-rest.set(2, `Lisbon, Portugal`);
+// const rest = new Map();
+// rest.set(`name`, `Classico Italiano`);
+// rest.set(1, `Firenze Italy`);
+// rest.set(2, `Lisbon, Portugal`);
 
-rest
-  .set(`catergories`, [`Italian`, `Pizzeria`, `Vegetarian`, `Organic`])
-  .set(`open`, 11)
-  .set(`close`, 23)
-  .set(true, `we are open :D`)
-  .set(false, `we are closed :()`);
-console.log(rest);
+// rest
+//   .set(`catergories`, [`Italian`, `Pizzeria`, `Vegetarian`, `Organic`])
+//   .set(`open`, 11)
+//   .set(`close`, 23)
+//   .set(true, `we are open :D`)
+//   .set(false, `we are closed :()`);
+// console.log(rest);
 
-console.log(rest.get(1));
+// console.log(rest.get(1));
 
 // Coding Challenge #3
 // Let's continue with our football betting app! This time, we have a map called
