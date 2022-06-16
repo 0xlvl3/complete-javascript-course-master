@@ -196,22 +196,40 @@ console.log(maskCreditCard(29321923801312));
 // you're stuck. Then pause and continue!
 // Afterwards, test with your own test data!
 
-const toCamelCase = function (str) {
-  const lowerStr = str.toLowerCase().split(`_`);
-  const secondStr = lowerStr[1].split(``);
-  const camelCap = secondStr[0].toUpperCase();
-  const camelCap2 = secondStr.join(``);
-  const sliceCamel = camelCap2.slice(1);
-  const newCamelCap = lowerStr[0] + camelCap + sliceCamel;
+// const toCamelCase = function (str) {
+//   const lowerStr = str.toLowerCase().split(`_`);
+//   const secondStr = lowerStr[1].split(``);
+//   const camelCap = secondStr[0].toUpperCase();
+//   const camelCap2 = secondStr.join(``);
+//   const sliceCamel = camelCap2.slice(1);
+//   const newCamelCap = lowerStr[0] + camelCap + sliceCamel;
 
-  return newCamelCap;
-};
+//   return newCamelCap;
+// };
 
-console.log(toCamelCase(`underscore_case`));
-console.log(toCamelCase(`Some_Variable`));
-console.log(toCamelCase(`calculate_AGE`));
-console.log(toCamelCase(`delayed_departure`));
-console.log(toCamelCase(`first_name`));
+// console.log(toCamelCase(`underscore_case`));
+// console.log(toCamelCase(`Some_Variable`));
+// console.log(toCamelCase(`calculate_AGE`));
+// console.log(toCamelCase(`delayed_departure`));
+// console.log(toCamelCase(`first_name`));
+
+document.body.append(document.createElement('textarea'));
+document.body.append(document.createElement('button'));
+
+document.querySelector(`button`).addEventListener(`click`, function () {
+  const text = document.querySelector(`textarea`).value;
+  const rows = text.split(`\n`);
+
+  for (const [i, row] of rows) {
+    const [first, second] = row.toLowerCase().trim().split(`_`);
+
+    const output = `${first}${second.replace(
+      second[0],
+      second[0].toUpperCase()
+    )}`;
+    console.log(`${output.padEnd(20)}${'✅'.repeat(i + 1)} `);
+  }
+});
 
 // const ordersSet = new Set([
 //   `Pasta`,
