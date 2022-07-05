@@ -81,6 +81,37 @@ const displayMovements = function (movements) {
 };
 displayMovements(account1.movements);
 
+// 'Steven Thomas Williams', username
+const user = 'Steven Thomas Williams'; //stw
+
+//had to use a forEach loop to loop over each to create a new object within the accounts object, if we would of used Math we would only create a new array
+const createUsernames = function (accs) {
+  accs.forEach(function (acc) {
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(` `)
+      .map(val => val[0])
+      .join(``);
+  });
+
+  // const username = user
+  //   .toLowerCase()
+  //   .split(' ')
+  //   .map(val => val[0])
+  //   .join('');
+  // return username;
+};
+
+createUsernames(accounts);
+
+const calcDisplayBalance = function (movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+
+  labelBalance.textContent = `${balance} EUR`;
+};
+
+calcDisplayBalance(account1.movements);
+
 // console.log(containerMovements.innerHTML);
 
 /////////////////////////////////////////////////
@@ -204,17 +235,138 @@ Hints: Use tools from all lectures in this section so far 😉
 GOOD LUCK 😀
 */
 
-function checkDogs(dogsJulia, dogsKate) {
-  const newJulia = dogsJulia.slice(1, 3);
-  const correctData = newJulia.concat(dogsKate);
-  correctData.forEach(function (val, i) {
-    if (val >= 3) {
-      console.log(`Dog number ${i + 1} is an adult, and is ${val} years old`);
-    } else console.log(`Dog number ${i + 1} is still a puppy 🐕`);
-  });
-}
+// function checkDogs(dogsJulia, dogsKate) {
+//   const newJulia = dogsJulia.slice(1, 3);
+//   const correctData = newJulia.concat(dogsKate);
+//   correctData.forEach(function (val, i) {
+//     if (val >= 3) {
+//       console.log(`Dog number ${i + 1} is an adult, and is ${val} years old`);
+//     } else console.log(`Dog number ${i + 1} is still a puppy 🐕`);
+//   });
+// }
 
-console.log(`1st`);
-checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
-console.log(`2nd`);
-checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
+// console.log(`1st`);
+// checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
+// console.log(`2nd`);
+// checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
+
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// const euroToUsd = 1.1;
+
+// // const movementsUSD = movements.map(function (mov) {
+// //   return Math.trunc(mov * euroToUsd);
+// // });
+
+// //arrow function of above map
+// const movementsUSD = movements.map(mov => Math.trunc(mov * euroToUsd));
+
+// const movementsTest = movements.map(function (val, i) {
+//   console.log(val, i);
+//   return val * (i + 1);
+// });
+
+// const movementsUSDfor = [];
+// for (const mov of movements) movementsUSDfor.push(Math.trunc(mov * euroToUsd)); //Math.trunc() removes the decimal points
+
+// const movementsDescription = movements.map(
+//   (mov, i) =>
+//     `Movement ${i + 1}: You ${mov > 0 ? `deposited` : `withdrew`} ${Math.abs(
+//       mov
+//     )}`
+// );
+
+// console.log(`original`);
+// console.log(movements);
+
+// console.log(`for loop`);
+// console.log(movementsUSDfor);
+
+// console.log(`math`);
+// console.log(movementsUSD);
+
+// console.log(`another math * index`);
+// console.log(movementsTest);
+
+// console.log(`math, arrow using (mov, i, arr)`);
+// console.log(movementsDescription);
+
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// // arr.filter(function(val, i, arr))
+// const deposits = movements.filter(function (mov) {
+//   return mov > 0; //use a boolean
+// });
+
+// //arrow filter function
+// const deposits2 = movements.filter(mov => mov > 0);
+
+// const withdrawals = movements.filter(mov => mov < 0);
+
+// console.log(`original arr`);
+// console.log(movements);
+// console.log(`normal filter function`);
+// console.log(deposits);
+// console.log(`arrow filter function (deposit)`);
+// console.log(deposits2);
+// console.log(`arrow filter function (withdrawal)`);
+// console.log(withdrawals);
+
+// //arr.reduce(function(accumulator, i, arr))
+// //accumulator is like a SNOWBALL
+// const totalBalance = movements.reduce(function (acc, val, i, arr) {
+//   console.log(`Iteration ${i}: ${acc}`);
+//   return (acc += val);
+// }, 0);
+
+// //arrow function of reduce
+// const arrowTotal = movements.reduce((acc, val) => (acc += val));
+
+// console.log(totalBalance);
+// console.log(arrowTotal);
+
+/*
+Coding Challenge #2
+Let's go back to Julia and Kate's study about dogs. This time, they want to convert dog ages to human ages and calculate the average age of the dogs in their study.
+
+Your tasks:
+
+Create a function 'calcAverageHumanAge', which accepts an arrays of dog's
+ages ('ages'), and does the following things in order:
+1. Calculate the dog age in human years using the following formula: if the dog is <= 2 years old, humanAge = 2 * dogAge. If the dog is > 2 years old,
+humanAge = 16 + dogAge * 4
+
+2. Exclude all dogs that are less than 18 human years old (which is the same as
+keeping dogs that are at least 18 years old)
+
+3. Calculate the average human age of all adult dogs (you should already know
+from other challenges how we calculate averages 😉)
+
+4. Run the function for both test datasets
+
+Test data:
+§ Data 1: [5, 2, 4, 1, 15, 8, 3]
+§ Data 2: [16, 6, 10, 5, 6, 1, 4]
+GOOD LUCK 😀
+*/
+
+const calcAverageHumanAge = function (ages) {
+  const humanAges = ages.map(val => (val <= 2 ? val * 2 : 16 + val * 4));
+
+  const adults = humanAges.filter(val => val >= 18);
+
+  const average = adults.reduce(function (acc, val, i, arr) {
+    return Math.trunc(acc + val / arr.length, 0);
+  });
+
+  //the return in my function must of influenced the return outside?
+  // const average = adults.reduce(
+  //   (acc, val, i, arr) => Math.trunc(acc + val / arr.length),
+  //   0
+  // );
+
+  return average;
+};
+
+console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
+console.log(calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]));
