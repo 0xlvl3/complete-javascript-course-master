@@ -33,7 +33,14 @@ const account4 = {
   pin: 4444,
 };
 
-const accounts = [account1, account2, account3, account4];
+const account5 = {
+  owner: 'Emma Bub',
+  movements: [1000, 1000, 3000, -1000, 50, 90, 10000, -2000, -300, -500, 1000],
+  interestRate: 1,
+  pin: 5555,
+};
+
+const accounts = [account1, account2, account3, account4, account5];
 
 // Elements
 const labelWelcome = document.querySelector('.welcome');
@@ -61,6 +68,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+//movements by account
 const displayMovements = function (movements) {
   containerMovements.innerHTML = '';
 
@@ -79,12 +87,12 @@ const displayMovements = function (movements) {
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
-displayMovements(account1.movements);
 
 // 'Steven Thomas Williams', username
 const user = 'Steven Thomas Williams'; //stw
 
 //had to use a forEach loop to loop over each to create a new object within the accounts object, if we would of used Math we would only create a new array
+//how usernames are created
 const createUsernames = function (accs) {
   accs.forEach(function (acc) {
     acc.username = acc.owner
@@ -102,17 +110,132 @@ const createUsernames = function (accs) {
   // return username;
 };
 
+//function created the usernames
 createUsernames(accounts);
 
-const calcDisplayBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+//total current balance displayed top right under login
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
 
-  labelBalance.textContent = `${balance} EUR`;
+  labelBalance.textContent = `(☞ﾟヮﾟ)☞ $${acc.balance}`;
 };
 
-calcDisplayBalance(account1.movements);
+//values display at the bottom of app, in, out and interest
+const calcDisplaySummary = function (acc) {
+  const incomes = acc.movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+
+  const out = acc.movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+
+  const interest = acc.movements
+    .filter(mov => mov > 0)
+    .map(deposit => (deposit * acc.interestRate) / 100)
+    .filter((int, i, arr) => {
+      // console.log(arr);
+      return int >= 1;
+    })
+    .reduce((acc, int) => acc + int, 0);
+
+  labelSumInterest.textContent = `$${interest}`;
+  labelSumOut.textContent = `$${out}`;
+  labelSumIn.textContent = `$${incomes}`;
+};
+
+const updateUI = function (acc) {
+  //display movements
+  displayMovements(acc.movements);
+
+  //display balance
+  calcDisplayBalance(acc);
+
+  //display summary
+  calcDisplaySummary(acc);
+};
+
+//Event handler
+let currentAccount;
+
+btnLogin.addEventListener('click', function (e) {
+  e.preventDefault(); //prevents form from submitting by default
+
+  //.value() is making sure values are correct to object
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+
+  //optional chaining '?'
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    //display ui and welcome message
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(` `)[0] //split(' ')[0] will take the first name of our currentAccount and display it with the welcome message
+    }`;
+
+    //clear input fields
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+
+    //creates the fade of login
+    containerApp.style.opacity = 100;
+
+    //update UI
+    updateUI(currentAccount);
+  }
+});
+
+//transer money
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault(); //common to do when working with forms
+
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(
+    acc => acc.username === inputTransferTo.value
+  );
+
+  //clears fields
+  inputTransferAmount.value = inputTransferTo.value = '';
+
+  if (
+    amount > 0 &&
+    receiverAcc &&
+    currentAccount.balance >= amount &&
+    receiverAcc?.username !== currentAccount.username
+  ) {
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+    updateUI(currentAccount);
+  }
+});
 
 // console.log(containerMovements.innerHTML);
+
+//close account
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault(); //prevents default
+
+  if (
+    currentAccount.username === inputCloseUsername.value &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    console.log(`true`);
+
+    const index = accounts.findIndex(
+      //findIndex(val) will return the first element that meets specified condition
+      acc => acc.username === currentAccount.username
+    );
+
+    //delete account
+    accounts.splice(index, 1);
+
+    //hide UI
+    containerApp.style.opacity = 0;
+  }
+
+  //clears fields
+  inputCloseUsername.value = inputClosePin.value = '';
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -350,23 +473,59 @@ Test data:
 GOOD LUCK 😀
 */
 
-const calcAverageHumanAge = function (ages) {
-  const humanAges = ages.map(val => (val <= 2 ? val * 2 : 16 + val * 4));
+// const calcAverageHumanAge = function (ages) {
+//   const humanAges = ages.map(val => (val <= 2 ? val * 2 : 16 + val * 4));
 
-  const adults = humanAges.filter(val => val >= 18);
+//   const adults = humanAges.filter(val => val >= 18);
 
-  const average = adults.reduce(function (acc, val, i, arr) {
-    return Math.trunc(acc + val / arr.length, 0);
-  });
+//   // const average = adults.reduce(function (acc, val, i, arr) {
+//   //   return Math.trunc(acc + val / arr.length, 0);
+//   // });
 
-  //the return in my function must of influenced the return outside?
-  // const average = adults.reduce(
-  //   (acc, val, i, arr) => Math.trunc(acc + val / arr.length),
-  //   0
-  // );
+//   //the return in my function must of influenced the return outside?
+//   const average = adults.reduce(
+//     (acc, val, i, arr) => Math.trunc(acc + val / arr.length),
+//     0
+//   );
 
-  return average;
-};
+//   return average;
+// };
 
-console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
-console.log(calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]));
+//coding challenge 3
+// const calcAverageHumanAge = ages =>
+//   ages
+//     .map(val => (val <= 2 ? val * 2 : 16 + val * 4))
+//     .filter(val => val >= 18)
+//     .reduce((acc, val, i, arr) => acc + val / arr.length, 0);
+
+// console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
+// console.log(calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]));
+
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// const euroToUsd = 1.1;
+// //chaining methods, we can only chain when the method returns an array
+// //PIPELINE
+// const totalDepositsInUSD = movements
+//   .filter(mov => mov > 0)
+//   // .map(mov => mov * euroToUsd)
+//   .map((mov, i, arr) => {
+//     //using the all the parameters avaiable we can check in the middle of our pipline that our values are correct using arr
+//     console.log(arr);
+//     return mov * euroToUsd;
+//   })
+//   .reduce((acc, mov) => acc + mov, 0);
+
+// console.log(totalDepositsInUSD);
+
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// const firstWithdrawal = movements.find(mov => mov < 0); //need a boolean result, find will return first element in the array that meets the boolean condition
+
+// console.log(movements);
+// console.log(firstWithdrawal);
+
+// console.log(accounts);
+
+// const account = accounts.find(acc => acc === 'Jessica Davis');
+// console.log(account);
