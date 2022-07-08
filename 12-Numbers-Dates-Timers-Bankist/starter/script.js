@@ -81,19 +81,44 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 // Functions
 
-const displayMovements = function (movements, sort = false) {
+const formatMovementDate = function (date) {
+  const calcDaysPassed = (date1, date2) =>
+    Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+
+  const daysPassed = calcDaysPassed(new Date(), date);
+
+  if (daysPassed === 0) return `Today`;
+  if (daysPassed === 1) return `Yesterday`;
+  if (daysPassed <= 7) return `${daysPassed} days ago`;
+
+  const day = `${date.getDate()}`.padStart(2, '0');
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
 
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+
+    const date = new Date(acc.movementsDates[i]);
+    const displayDate = formatMovementDate(date);
+
+    const calcDaysPassed = (date1, date2) =>
+      Math.abs(date2 - date1) / (1000 * 60 * 60 * 24);
 
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
+        <div class="movements__date">${displayDate}</div>
         <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
@@ -142,7 +167,7 @@ createUsernames(accounts);
 
 const updateUI = function (acc) {
   // Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 
   // Display balance
   calcDisplayBalance(acc);
@@ -154,6 +179,11 @@ const updateUI = function (acc) {
 ///////////////////////////////////////
 // Event handlers
 let currentAccount;
+
+//FAKE ALWAYS LOGGED IN
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = 100;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -170,6 +200,16 @@ btnLogin.addEventListener('click', function (e) {
       currentAccount.owner.split(' ')[0]
     }`;
     containerApp.style.opacity = 100;
+
+    //Dispaly current date and time
+    const now = new Date();
+    const day = `${now.getDate()}`.padStart(2, '0'); //padStart(final length, value to be added)
+    const month = `${now.getMonth() + 1}`.padStart(2, '0'); //same as above
+    const year = now.getFullYear();
+    const hour = `${now.getHours()}`.padStart(2, '0');
+    const minutes = `${now.getMinutes()}`.padStart(2, '0');
+    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minutes}`;
+    //day/month/year
 
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
@@ -198,6 +238,10 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
+    //add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
+
     // Update UI
     updateUI(currentAccount);
   }
@@ -211,6 +255,9 @@ btnLoan.addEventListener('click', function (e) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
     currentAccount.movements.push(amount);
+
+    //add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
 
     // Update UI
     updateUI(currentAccount);
@@ -244,7 +291,7 @@ btnClose.addEventListener('click', function (e) {
 let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(acc.movements, !sorted);
   sorted = !sorted;
 });
 
@@ -252,6 +299,7 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 // LECTURES
 
+/*
 //conversion
 console.log(Number('23'));
 console.log(+'23'); //this is the same as above
@@ -337,3 +385,63 @@ const transferFee2 = 1_500; //1,500 here
 
 console.log(Number('23_000')); //using numeric seperators in strings that you are trying to convert will throw a NaN
 console.log(parseInt('230_000')); //this will return 230, leaving off the other 3 000.
+
+console.log(2 ** 53 - 1); //biggest int value for JavaScript
+console.log(Number.MAX_SAFE_INTEGER); //same as above
+
+console.log(2402323192309123912930123n); //transforms number into a bigInt num
+console.log(BigInt(2402323192309123912930123));
+
+//operations with BigInt
+console.log(10000n + 10000n);
+console.log(10000n * 100000n);
+console.log(10000n * 103231231232313231230000n); //BigInt cannot be mixed with regular int
+
+console.log(20n > 15); // > & < will work with BigInt and normal int
+console.log(20n === 20); //strict equality will return false as these are two different primitives
+console.log(20n == 20); //will be true
+
+//create a date
+const now = new Date(); //get current date and time now
+console.log(now);
+
+console.log(new Date(`Jul 08 2022 15:00:58`));
+console.log(new Date(`December 24, 2015`)); //not usually a good idea
+
+console.log(new Date(account1.movementsDates[0]));
+
+console.log(new Date(2037, 10, 19, 15, 23, 5));
+// Thu Nov 19 2037 15:23:05 GMT+1100 (Australian Eastern Daylight Time)
+//new Date(year, month(0 based), day, hour, min, sec)
+console.log(new Date(1995, 0, 6, 10, 50, 55));
+
+console.log(new Date(0));
+console.log(new Date(3 * 24 * 60 * 60 * 1000));
+
+//working with dates
+
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(future);
+console.log(future.getFullYear()); //returns the year
+console.log(future.getMonth()); //returns month - 0 based
+console.log(future.getDate()); //returns day
+console.log(future.getDay()); //returns day as in int value but day represents mon = 1, tues = 2...
+console.log(future.getMinutes()); //returns minutes
+console.log(future.getHours()); //returns hours
+console.log(future.getSeconds()); //returns seconds
+console.log(future.toISOString()); //returns the ISOString which is a string you can store
+console.log(future.getTime()); //returns the timestamp
+console.log(new Date(2142217380000)); //using the timestamp we can return the date associated with that timestamp
+console.log(Date.now()); //returns timestamp right now
+
+future.setFullYear(2040); //setter
+console.log(future);
+
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(+future);
+
+const calcDaysPassed = (date1, date2) => date2 - date1;
+console.log(calcDaysPassed(new Date(2022, 10, 24), new Date(2022, 10, 27)));
+console.log(new Date(259200000));
+
+*/
