@@ -94,7 +94,7 @@ const displayMovements = function (movements, sort = false) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
 
@@ -104,19 +104,19 @@ const displayMovements = function (movements, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}€`;
+  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -126,7 +126,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
 const createUsernames = function (accs) {
@@ -164,7 +164,7 @@ btnLogin.addEventListener('click', function (e) {
   );
   console.log(currentAccount);
 
-  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+  if (currentAccount?.pin === +inputLoginPin.value) {
     // Display UI and message
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
@@ -182,7 +182,7 @@ btnLogin.addEventListener('click', function (e) {
 
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
-  const amount = Number(inputTransferAmount.value);
+  const amount = +inputTransferAmount.value;
   const receiverAcc = accounts.find(
     acc => acc.username === inputTransferTo.value
   );
@@ -206,7 +206,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -223,7 +223,7 @@ btnClose.addEventListener('click', function (e) {
 
   if (
     inputCloseUsername.value === currentAccount.username &&
-    Number(inputClosePin.value) === currentAccount.pin
+    +inputClosePin.value === currentAccount.pin
   ) {
     const index = accounts.findIndex(
       acc => acc.username === currentAccount.username
@@ -251,3 +251,89 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+//conversion
+console.log(Number('23'));
+console.log(+'23'); //this is the same as above
+
+//parsing
+//Number.parseInt(string, radix?-the base we are using)
+console.log(Number.parseInt('30px', 10)); //this will find the number within the string, string must start with a number 'e23' would not work
+
+console.log(Number.parseFloat('2.5rem')); //will return decimal from string
+console.log(Number.parseInt('2.5rem')); //will remove decimal
+//should use parse when checking if a string is a number value
+
+console.log(Number.isNaN(23)); //returns false, as it's a int
+console.log(Number.isNaN('23')); //returns false as well, as it is a number
+//Check if value is NaN
+
+console.log(Number.isFinite(20)); //return true as it's fintie
+console.log(Number.isFinite(20 / 0)); //true as this is Infinty
+console.log(20 / 0);
+//should use isFinite to check if value is a number
+
+console.log(Number.isInteger(23));
+console.log(Number.isInteger(23.0));
+
+//square root
+console.log(Math.sqrt(25));
+console.log(25 ** (1 / 2)); //same as above
+console.log(8 ** (1 / 3));
+
+console.log(Math.max(5, 18, 23, 11, 2)); //returns 23, the highest value
+console.log(Math.max(5, 18, '23', 11, 2)); //returns 23, the highest value
+console.log(Math.max(5, 18, '23px', 11, 2)); //returns NaN, as the highest value is NaN
+
+console.log(Math.min(5, 18, 23, 11, 2)); //returns 2, the lowest value
+console.log(Math.min(5, 18, 23, 11, '2')); //returns 2, the lowest value
+
+console.log(Math.PI); //returns 3.1415...
+console.log(Math.PI * Number.parseFloat(`10px`) ** 2);
+
+console.log(Math.trunc(Math.random() * 6) + 1); //random dice rolls
+
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+//this will always give us a random number between max - min values specified
+// Math.random returns 0...1 0...(max - min)
+console.log(randomInt(10, 20));
+
+//rounding integers
+console.log(Math.trunc(23.3)); //removes decimals
+
+console.log(Math.round(23.9)); //rounds to nearest int
+console.log(Math.round(23.3));
+
+console.log(Math.ceil(24.5)); //always rounds up
+console.log(Math.ceil(24.2));
+
+console.log(Math.floor(24.7)); //always round down
+console.log(Math.floor(24.2));
+
+console.log(Math.trunc(-23.3));
+console.log(Math.floor(-23.3)); //with negative numbers floor will take -23 and round it to -24 as it works the other way around returning to the floor -> 0
+
+//rounding decimal(floating point)
+console.log((2.7).toFixed(0)); //toFixed(floating point amount), as a string
+console.log((2.7).toFixed(3)); //returns 2.700 as we specified to 3 decimal places
+console.log((2.345).toFixed(1)); //returns 2.3
+console.log(+(2.345).toFixed(1)); //placing a + at the start will return a num value
+
+//numeric seperators
+const diameter = 287_460_000_000;
+console.log(diameter); //will ignore the numeric seperators
+
+const priceCents = 345_99;
+console.log(priceCents);
+
+const transferFee1 = 15_00; //numeric seperators give the idea of different meanings to numbers 15.00 here
+const transferFee2 = 1_500; //1,500 here
+
+// const PI = 3._1415;
+// const PI = _3.1415;
+// const PI = 3_.1415;
+// console.log(PI) all 3 of the above will throw an error on placement of numeric seperator
+
+console.log(Number('23_000')); //using numeric seperators in strings that you are trying to convert will throw a NaN
+console.log(parseInt('230_000')); //this will return 230, leaving off the other 3 000.
