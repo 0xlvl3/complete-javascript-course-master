@@ -7,9 +7,43 @@ const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
-//used for scrollto
+// Scroll to
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
+// Tabbed Components
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+const nav = document.querySelector('.nav');
+
+//STICKY NAVIGATION
+const initialCoords = section1.getBoundingClientRect();
+console.log(initialCoords);
+window.addEventListener('scroll', function () {
+  console.log(window.scrollY);
+
+  if (window.scrollY > initialCoords.top) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+});
+
+//MENU FADE ANIMATION
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
+  }
+};
+
+//bind creates a new function that when called has it's this keyword set to the provided value, with a given sequence of arguments preceding any provided whent he new function is called.
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+//passing "argument" into handler
+nav.addEventListener('mouseout', handleHover.bind(1));
 
 const openModal = function (e) {
   e.preventDefault();
@@ -38,6 +72,37 @@ overlay.addEventListener('click', closeModal);
 //function to scrollto -> learn more -> section1
 btnScrollTo.addEventListener('click', function (e) {
   section1.scrollIntoView({ behavior: 'smooth' });
+});
+
+//not good practice
+// tabs.forEach(function (e) {
+//   e.addEventListener('click', function (e) {
+//     console.log('tab');
+//   });
+// });
+
+//TAB COMPONENT
+//whole idea is to add and remove class to manipulate content to our need
+tabsContainer.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  //finds the closest parent with class name specified
+  const clicked = e.target.closest('.operations__tab');
+
+  //guard clause
+  if (!clicked) return;
+
+  //remove active classes
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+
+  //Active tab
+  clicked.classList.add('operations__tab--active');
+
+  //Active content area
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
 });
 
 //not using event deligation, this would be fine for this application but if we had more events it would impact performance because every event here creates a new copy of this function
@@ -339,3 +404,17 @@ console.log(h1.parentElement.children);
 });
 
 */
+
+const obsCallback = function (entries, observer) {
+  entries.forEach(entry => {
+    console.log(entry);
+  });
+};
+
+const obsOptions = {
+  root: null,
+  threshold: 0.1,
+};
+
+const observer = new IntersectionObserver(obsCallback, obsOptions);
+console.log(observer.observe(section1));
