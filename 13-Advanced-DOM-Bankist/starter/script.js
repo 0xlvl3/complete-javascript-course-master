@@ -14,17 +14,144 @@ const section1 = document.querySelector('#section--1');
 const tabs = document.querySelectorAll('.operations__tab');
 const tabsContainer = document.querySelector('.operations__tab-container');
 const tabsContent = document.querySelectorAll('.operations__content');
-const nav = document.querySelector('.nav');
 
-//STICKY NAVIGATION
+const nav = document.querySelector('.nav');
+const header = document.querySelector('.header');
+const allSections = document.querySelectorAll('.section');
+
+//SLIDER
+const slides = document.querySelectorAll('.slide');
+const slider = document.querySelector('.slider');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+const dotContainer = document.querySelector('.dots');
+
+let curSlide = 0;
+const maxSlide = slides.length; //nodelists you can read length property
+
+// slides.forEach((s, i) => (s.style.transform = `translateX(${100 * i})`));
+//0, 100%, 200%, 300%
+
+// slider.style.transform = 'scale(0.2) translateX(-1200px)';
+// slider.style.overflow = 'visible';
+
+function goToSlide(slide) {
+  slides.forEach(
+    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+  );
+}
+
+goToSlide(0);
+
+const nextSlide = function () {
+  if (curSlide === maxSlide - 1) curSlide = 0;
+  else curSlide++;
+
+  goToSlide(curSlide);
+};
+
+const prevSlide = function () {
+  if (curSlide === 0) curSlide = maxSlide - 1;
+  else curSlide--;
+
+  goToSlide(curSlide);
+};
+
+//Next slide
+btnRight.addEventListener('click', nextSlide);
+btnLeft.addEventListener('click', prevSlide);
+
+//using arrow keys to cycle through
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'ArrowLeft') prevSlide();
+  if (e.key === 'ArrowRight') nextSlide();
+});
+
+//dots below cycle
+const createDots = function () {
+  slides.forEach(function (_, i) {
+    dotContainer.insertAdjacentHTML(
+      'beforeend',
+      `<button class="dots__dot" data-slide="${i}"></button>`
+    );
+  });
+};
+createDots();
+
+//LAZY LOADING IMAGES
+const imageTargets = document.querySelectorAll('img[data-src]');
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+  // console.log(entry);
+
+  //guard
+  if (!entry.isIntersecting) return;
+
+  entry.target.src = entry.target.dataset.src;
+
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img');
+  });
+
+  observer.unobserve(entry.target);
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '-200px',
+});
+
+imageTargets.forEach(img => imgObserver.observe(img));
+
+//REVEAL SECTIONS
+const revealSection = function (entries, observer) {
+  const [entry] = entries;
+  // console.log(entry);
+  if (!entry.isIntersecting) return;
+
+  if (entry.isIntersecting) entry.target.classList.remove('section--hidden');
+  observer.unobserve(entry.target);
+};
+const sectionObs = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.15,
+});
+
+allSections.forEach(function (section) {
+  sectionObs.observe(section);
+  // section.classList.add('section--hidden');
+});
+
+//GET HEIGHT OF THE NAV BAR
+const navHeight = nav.getBoundingClientRect().height;
+
+const stickyNav = function (entries) {
+  const [entry] = entries;
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+
+//creating an intersection observer using stickyNav function
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`,
+});
+headerObserver.observe(header);
+
+//STICKY NAVIGATION USING SCROLL - not good for performance
+/*
 const initialCoords = section1.getBoundingClientRect();
 console.log(initialCoords);
 window.addEventListener('scroll', function () {
-  console.log(window.scrollY);
+  // console.log(window.scrollY);
 
   if (window.scrollY > initialCoords.top) nav.classList.add('sticky');
   else nav.classList.remove('sticky');
 });
+*/
 
 //MENU FADE ANIMATION
 const handleHover = function (e) {
@@ -403,8 +530,10 @@ console.log(h1.parentElement.children);
   if (el !== h1) el.style.transform = 'scale(0.5)';
 });
 
-*/
+//BETTER THAN SCROLL
+//Intersection Observer API
 
+//observe when the target comes into view
 const obsCallback = function (entries, observer) {
   entries.forEach(entry => {
     console.log(entry);
@@ -412,9 +541,17 @@ const obsCallback = function (entries, observer) {
 };
 
 const obsOptions = {
+  //root: element that target element intercepts
   root: null,
-  threshold: 0.1,
+  //percentage of interception that the callback is called, 0.1 === 10%
+  //array here will call when target is 0 === completely out of view and when it's at 20%
+  threshold: [0, 0.2],
 };
 
+//use observer to observe a specific target
 const observer = new IntersectionObserver(obsCallback, obsOptions);
 console.log(observer.observe(section1));
+//EXAMPLE ABOVE
+
+
+*/
