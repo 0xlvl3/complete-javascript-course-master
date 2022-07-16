@@ -41,13 +41,12 @@ function goToSlide(slide) {
   );
 }
 
-goToSlide(0);
-
 const nextSlide = function () {
   if (curSlide === maxSlide - 1) curSlide = 0;
   else curSlide++;
 
   goToSlide(curSlide);
+  activateDot(curSlide);
 };
 
 const prevSlide = function () {
@@ -55,6 +54,7 @@ const prevSlide = function () {
   else curSlide--;
 
   goToSlide(curSlide);
+  activateDot(curSlide);
 };
 
 //Next slide
@@ -76,7 +76,24 @@ const createDots = function () {
     );
   });
 };
-createDots();
+
+const activateDot = function (slide) {
+  document
+    .querySelectorAll('.dots__dot')
+    .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+  document
+    .querySelector(`.dots__dot[data-slide="${slide}"]`)
+    .classList.add('dots__dot--active');
+};
+
+dotContainer.addEventListener('click', function (e) {
+  if (e.target.classList.contains('dots__dot')) {
+    const { slide } = e.target.dataset;
+    goToSlide(slide);
+    activateDot(slide);
+  }
+});
 
 //LAZY LOADING IMAGES
 const imageTargets = document.querySelectorAll('img[data-src]');
@@ -231,6 +248,13 @@ tabsContainer.addEventListener('click', function (e) {
     .querySelector(`.operations__content--${clicked.dataset.tab}`)
     .classList.add('operations__content--active');
 });
+
+const init = function () {
+  goToSlide(0);
+  createDots();
+  activateDot(0);
+};
+init();
 
 //not using event deligation, this would be fine for this application but if we had more events it would impact performance because every event here creates a new copy of this function
 // document.querySelectorAll('.nav__link').forEach(el => {
