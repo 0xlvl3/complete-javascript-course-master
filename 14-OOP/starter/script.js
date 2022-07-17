@@ -98,3 +98,9 @@ console.log(bmw, mercedes);
 console.log(bmw.accelerate(), bmw.brake());
 console.log(mercedes.accelerate(), mercedes.brake());
 console.log(bmw.__proto__);
+
+//.__proto__ will show the associated methods that jonas can use
+console.log(jonas.__proto__ === Person.prototype);
+console.log(jonas.__proto__.__proto__); //returns the top of prototype chain Object.prototype
+console.log(Person.prototype.constructor); //returns the whole constructor
+console.dir(Person.prototype.constructor); //returns the whole constructor
