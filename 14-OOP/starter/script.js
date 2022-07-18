@@ -443,4 +443,102 @@ const mike = new StudentCl('Mike Soeus', 1991, 'Computer Science');
 console.log(mike);
 mike.introduce();
 mike.calcAge(); //this calcAge will overwrite the Parent class method
+
+////////////////////////////////////////////////
+//Inheritance Between 'Classes': Object.create
+
+const PersonProto = {
+  calcAge() {
+    console.log(`My age would be ${2037 - this.birthYear}`);
+  },
+
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+
+const steven = Object.create(PersonProto);
+
+const StudentProto = Object.create(PersonProto);
+StudentProto.init = function (firstName, birthYear, course) {
+  PersonProto.init.call(this, firstName, birthYear);
+  this.course = course;
+};
+
+StudentProto.introduce = function () {
+  console.log(`My name is ${this.firstName} and I am taking ${this.course}`);
+};
+
+const jay = Object.create(StudentProto);
+
+console.log(jay.__proto__);
+jay.init('Jay', 2010, 'Computer Science');
+console.log(jay);
+jay.introduce();
+jay.calcAge();
+
+
 */
+
+//Fields are definded outside of the constructor
+//1. Public fields
+//2. Private fields
+
+//3. Public methods
+//4. Private methods
+
+class Account {
+  //1. Public field (instances) referenacble from this keyword
+  locale = navigator.language;
+
+  //2. Private fields
+  #movements = [];
+  #pin;
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    // this.locale = navigator.language;
+
+    //Protected properties
+    this.#pin = pin;
+    // this._movements = [];
+
+    console.log(`Thanks for opening an account ${owner}`);
+  }
+
+  //3. Public interface(Public Methods)
+  getMovements() {
+    return this.#movements;
+  }
+
+  deposit(val) {
+    this.#movements.push(val);
+  }
+
+  withdrawal(val) {
+    this.deposit(-val);
+  }
+
+  requestLoan(val) {
+    if (this._approveLoan(val));
+    this.deposit(val);
+    console.log(`Loan approved`);
+  }
+
+  //4. Private methods - not yet implemented
+  _approveLoan(val) {
+    return true;
+  }
+}
+
+const acc1 = new Account('Jonas', 'EUR', 1111);
+console.log(acc1);
+acc1.deposit(200);
+acc1.withdrawal(100);
+acc1.requestLoan(1000);
+
+console.log(acc1);
+console.log(acc1.getMovements());
+//console.log(acc1.#movements); //will throw error because we are trying to access a private field
