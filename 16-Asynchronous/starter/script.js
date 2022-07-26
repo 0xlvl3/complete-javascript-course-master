@@ -3,6 +3,38 @@
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 
+const renderCountry = function (data, className = '') {
+  const html = `
+  <article class="country ${className}">
+    <img class="country__img" src="${data.flag}" />
+    <div class="country__data">
+      <h3 class="country__name">${data.name}</h3>
+      <h4 class="country__region">${data.region}</h4>
+      <p class="country__row"><span>👫</span>${(
+        +data.population / 1000000
+      ).toFixed(1)} people</p>
+      <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+      <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+    </div>
+  </article>
+  `;
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.style.opacity = 1;
+};
+
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  countriesContainer.style.opacity = 1;
+};
+
+const getJSON = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+    return response.json();
+  });
+};
+
 ///////////////////////////////////////
 // https://restcountries.com/v2/
 
@@ -372,8 +404,6 @@ btn.addEventListener('click', function () {
   // whereAmI(-33.933, 18.474);
 });
 
-
-
 //EXAMPLE OF MICROSTACK AND CALLBACK
 console.log(`Test start`);
 setTimeout(() => console.log('0 sec timer'), 0);
@@ -385,14 +415,180 @@ Promise.resolve(`Resolved promise 2`).then(res => {
 });
 console.log(`test end`);
 
-*/
 
-const lotteryPromise = new Promise(function (resolve, reject) {
-  if (Math.random() >= 0.75) {
-    resolve(`You WIN 🏆`);
-  } else {
-    reject(`You lost your money lol 🤣`);
-  }
+const lotteryPromise = new Promise(function (reslove, reject) {
+  console.log(`Lottery draw is happening (⊙_⊙)？`);
+  setTimeout(function () {
+    if (Math.random() >= 0.5) {
+      reslove(`You win ╰（‵□′）╯`);
+    } else {
+      reject(new Error(`You lost your money (┬┬﹏┬┬)`));
+    }
+  }, 2000);
 });
 
-lotteryPromise.then(res => console.log(res)).catch(err => console.log(err));
+lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+
+//Promisifying setTimeout
+const wait = function (seconds) {
+  return new Promise(function (reslove) {
+    setTimeout(reslove, seconds * 1000);
+  });
+};
+wait(2)
+  .then(() => {
+    console.log(`I waited for 2 seconds`);
+    return wait(1);
+  })
+  .then(() => console.log(`I wanted for 1 seconds`));
+
+console.log(`Getting position`);
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    // navigator.geolocation.getCurrentPosition(
+    //   position => reslove(position),
+    //   err => reject(err)
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+getPosition().then(pos => console.log(pos));
+
+const whereAmI = function () {
+  getPosition()
+    .then(pos => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+
+      return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+    })
+
+    .then(res => {
+      if (!res.ok) throw new Error(`Problem with geocoding ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      console.log(data);
+      console.log(`You are in ${data.city}, ${data.country}`);
+
+      return fetch(`https://restcountries.eu/rest/v2/name/${data.country}`);
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(`Country not found (${res.status})`);
+
+      return res.json();
+    })
+    .then(data => renderCountry(data[0]))
+    .catch(err => console.error(`${err.message} 💥`));
+};
+
+btn.addEventListener('click', whereAmI);
+
+
+Coding Challenge #2
+
+For this challenge you will actually have to watch the video! Then, build the image loading functionality that I just showed you on the screen.
+
+Your tasks:
+Tasks are not super-descriptive this time, so that you can figure out some stuff by yourself. Pretend you're working on your own 😉
+
+PART 1
+1. Create a function 'createImage' which receives 'imgPath' as an input.
+This function returns a promise which creates a new image (use
+document.createElement('img')) and sets the .src attribute to the
+provided image path
+
+2. When the image is done loading, append it to the DOM element with the
+'images' class, and resolve the promise. The fulfilled value should be the
+image element itself. In case there is an error loading the image (listen for
+the'error' event), reject the promise
+
+3. If this part is too tricky for you, just watch the first part of the solution
+
+PART 2
+
+4. Consume the promise using .then and also add an error handler
+
+5. After the image has loaded, pause execution for 2 seconds using the 'wait'
+function we created earlier
+
+6. After the 2 seconds have passed, hide the current image (set display CSS
+property to 'none'), and load a second image (Hint: Use the image element
+returned by the 'createImage' promise to hide the current image. You will
+need a global variable for that 😉)
+
+7. After the second image has loaded, pause execution for 2 seconds again
+
+8. After the 2 seconds have passed, hide the current image
+Test data: Images in the img folder. Test the error handler by passing a wrong
+image path. Set the network speed to “Fast 3G” in the dev tools Network tab,
+otherwise images load too fast
+GOOD LUCK 😀
+
+
+const imgContainer = document.querySelector('.images');
+
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const img = document.createElement(`img`);
+    img.src = imgPath;
+
+    img.addEventListener('load', function () {
+      imgContainer.append(img);
+      resolve(img);
+    });
+
+    img.addEventListener('error', function () {
+      reject(new Error(`Image not found`));
+    });
+  });
+};
+let currentImg;
+
+createImage(
+  `https://images.unsplash.com/photo-1658233126994-e383874733ba?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80`
+)
+  .then(img => {
+    currentImg = img;
+    console.log(`image 1 loaded`);
+    return wait(2);
+  })
+  .then(() => {
+    currentImg.style.display = `none`;
+    return createImage(
+      `https://images.unsplash.com/photo-1657299141942-3dab1b224686?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80`
+    );
+  })
+  .then(img => {
+    currentImg = img;
+    console.log(`image 2 loaded`);
+    return wait(2);
+  })
+  .then(() => {
+    currentImg.style.display = `none`;
+  })
+  .catch(err => console.error(`This is your error = ${err}`));
+*/
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+//behind the scenes everything is async
+const whereAmI = async function (country) {
+  const pos = await getPosition();
+  const { lat: latitude, lng: longitude } = pos.coords;
+
+  const res = await fetch(`https://restcountries.com/v2/name/${country}`);
+  const data = await res.json();
+  renderCountry(data[0]);
+};
+whereAmI(`australia`);
+console.log(`FIRST`);
