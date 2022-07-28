@@ -63,3 +63,4 @@ ShoppingCart2.addToCart('pizza', 2);
 
 
 */
+import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
